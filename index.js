@@ -1,5 +1,5 @@
 import express from "express";
-import {Sequelize} from "sequelize";
+import { Sequelize, DataTypes } from "sequelize";
 const sequelize = new Sequelize('biblioteca2025', 'postgres', '#Felipe123', {
     host: 'localhost',
     port: 5432,
@@ -9,7 +9,31 @@ const sequelize = new Sequelize('biblioteca2025', 'postgres', '#Felipe123', {
         freezeTableName: true
     }
   });
-  try {
+const Editora = sequelize.define(
+    'editora',
+    {
+      ideditora: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      nomeeditora: {
+        type: DataTypes.STRING(60),
+        allowNull: false,
+      },
+      cnpj: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+      },
+      endereco: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
+    }
+  );
+
+try {
     await sequelize.authenticate();
     console.log('Conexão com o banco de dados realizada com sucesso.');
   } catch (error) {
