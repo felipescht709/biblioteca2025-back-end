@@ -49,12 +49,35 @@ app.get('/editora', async  (req, res)=>{
         const respostaBanco =  await Editora.findAll();
         res.json(respostaBanco);
 });
+// get editora by id
 app.get('/editora/:id', async  (req, res)=>{
     const id= req.params.id;
     const respostaBanco =  await Editora.findByPk(id);
     res.json(respostaBanco);
 });
-
-
-
+// create editora
+app.post('/editora', async (req, res)=>{
+    const nomeeditora = req.body.nomeeditora;
+    const cnpj = req.body.cnpj;
+    const endereco = req.body.endereco;
+    const respostaBanco =  await Editora.create(req.body);
+    res.json(respostaBanco);
+});
+// update editora
+app.put('/editora/:id', async (req, res)=>{
+    const nomeeditora = req.body.nomeeditora;
+    const cnpj = req.body.cnpj;
+    const endereco = req.body.endereco;
+    const ideditora= req.params.id;
+    const respostaBanco =  await Editora.update(
+        {nomeeditora, cnpj, endereco},
+        {where: {ideditora}});
+    res.json(respostaBanco);
+});
+// delete editora
+app.delete('/editora/:id', async (req, res)=>{
+  const ideditora= req.params.id;
+  const respostaBanco =  await Editora.destroy({where: {ideditora}});
+  res.json(respostaBanco);
+});
 app.listen(3000, ()=>{    console.log("Servidor rodando na porta 3000")});
