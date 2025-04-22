@@ -1,6 +1,12 @@
 import express from "express";
 import banco from "./banco.js";
 import editora from "./controller/EditoraController.js";
+import Emprestimo from "./controller/EmprestimoController.js"
+import usuario from "./controller/UsuarioController.js";
+import autor from "./controller/AutorController.js";
+import livro from "./controller/LivroController.js";
+import categoria from "./controller/CategoriaController.js";
+import funcionario from "./controller/FuncionarioController.js";
 
 try {
     await banco.authenticate();
@@ -29,8 +35,7 @@ app.put('/editora/:id', editora.alterar);
 // delete editora
 app.delete('/editora/:id', editora.excluir);
 
-// rotas crud da tabela autor
-import autor from "./controller/AutorController.js";
+
 // listar todos os autores
 app.get('/autor', autor.listar);
 // selecionar autor by id
@@ -42,8 +47,7 @@ app.put('/autor/:id', autor.alterar);
 // delete autor
 app.delete('/autor/:id', autor.excluir);
 
-// rotas crud da tabela livro
-import livro from "./controller/LivroController.js";
+
 // listar todos os livros
 app.get('/livro', livro.listar);
  //selecionar livro by id
@@ -55,8 +59,7 @@ app.put('/livro/:id', livro.alterar);
 // delete livro
 app.delete('/livro/:id', livro.excluir);
 
-// rotas crud da tabela categoria
-import categoria from "./controller/CategoriaController.js";
+
 // listar todas as categorias
 app.get('/categoria', categoria.listar);
 // selecionar categoria by id
@@ -68,8 +71,7 @@ app.put('/categoria/:id', categoria.alterar);
 // delete categoria
 app.delete('/categoria/:id', categoria.excluir);
 
-// rotas crud da tabela usuario
-import usuario from "./controller/UsuarioController.js";
+
 // listar todos os usuarios
 app.get('/usuario', usuario.listar);
 // selecionar usuario by id
@@ -80,5 +82,26 @@ app.post('/usuario', usuario.inserir);
 app.put('/usuario/:id', usuario.alterar);
 // delete usuario
 app.delete('/usuario/:id', usuario.excluir);
+
+
+// listar todos os emprestimo
+app.get('/emprestimo', Emprestimo.listar);
+// selecionar emprestimo by id
+app.get('/emprestimo/:id', Emprestimo.selecionar);
+// create emprestimo
+app.post('/emprestar', Emprestimo.emprestar);
+// update emprestimo
+app.put('/devolver/:id', Emprestimo.devolver);
+
+
+//listar todos os funcionarios
+app.get('/funcionario', funcionario.listar);
+// selecionar funcionario by id
+app.get('/funcionario/:id', funcionario.selecionar);
+// create funcionario
+app.post('/funcionario', funcionario.inserir);
+// update funcionario
+app.put('/funcionario/:id', funcionario.alterar);
+
 
 app.listen(3000, ()=>{    console.log("Servidor rodando na porta 3000")});
