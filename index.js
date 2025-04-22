@@ -50,6 +50,8 @@ app.delete('/autor/:id', autor.excluir);
 
 // listar todos os livros
 app.get('/livro', livro.listar);
+// listar livros disponíveis para empréstimo
+app.get('/livro-disponiveis', livro.listarDisponiveis); 
  //selecionar livro by id
 app.get('/livro/:id', livro.selecionar);
 // create livro

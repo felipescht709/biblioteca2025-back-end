@@ -36,4 +36,20 @@ async function excluir (req, res) {
     res.json(respostaBanco);
   }
 
-export default {listar, selecionar, inserir, alterar, excluir};
+async function listarDisponiveis(req, res) {
+    try {
+        const livrosDisponiveis = await livro.findAll({
+            where: {
+                ativo: true,
+                emprestado: false,
+            },
+        });
+
+        res.status(200).json(livrosDisponiveis);
+    } catch (error) {
+        console.error("Erro ao listar livros disponíveis:", error);
+        res.status(500).json({ error: "Erro ao listar livros disponíveis para empréstimo." });
+    }
+}
+
+export default {listar, selecionar, inserir, alterar, excluir, listarDisponiveis};
