@@ -2,6 +2,7 @@ import Emprestimo from "../model/EmprestimoModel.js";
 import livro from "../model/LivroModel.js";
 import usuario from "../model/UsuarioModel.js";
 import moment from "moment";
+import Multa from "../model/MultaModel.js"; 
 
 async function listar (req, res){
     const respostaBanco =  await Emprestimo.findAll();
@@ -53,32 +54,57 @@ async function emprestar (req, res){
 }
 
 async function devolver(req, res) {
-    const id_emprestimo = req.body.id_emprestimo;
-    if (!id_emprestimo) {
+  const idemprestimo = req.params.id; 
+  if (!idemprestimo) {
       return res
-        .status(422)
-        .json({ error: "O parâmetro id_emprestimo é obrigatório." });
-    }
-  
-    const emprestimoBanco = await Emprestimo.findByPk(id_emprestimo);
-    if (!emprestimoBanco) {
-      return res.status(404).json({ error: "Empréstimo não encontrado." });
-    }
-  
-    if (emprestimoBanco.devolucao !== null) {
-      return res.status(422).json({ message: "O empréstimo já foi devolvido." });
-    }
-  
-    const devolucao = moment().format("YYYY-MM-DD");
-    const respostabanco = await Emprestimo.update(
-      { devolucao },
-      { where: { id_emprestimo } }
-    );
-  
-    const id_livro = emprestimoBanco.id_livro;
-    const emprestado = false;
-    await livro.update({ emprestado }, { where: { id_livro } }); 
-    res.status(200).json(respostabanco);
+          .status(422)
+          .json({ error: "O parâmetro idemprestimo é obrigatório." });
   }
-  
+
+  const emprestimoBanco = await Emprestimo.findByPk(idemprestimo);
+  if (!emprestimoBanco) {
+      return res.status(404).json({ error: "Empréstimo não encontrado." });
+  }
+
+  if (emprestimoBanco.devolucao !== null) {
+      return res.status(422).json({ message: "O empréstimo já foi devolvido." });
+  }
+
+  const devolucao = moment().format("YYYY-MM-DD");
+  const vencimento = emprestimoBanco.vencimento; // Data de vencimento do empréstimo
+  const diasAtraso = moment(devolucao).diff(moment(vencimento), "days");
+
+  // Verifica se há atraso
+  if (diasAtraso > 0) {
+      const valorMulta = diasAtraso * 2.5; // R$ 2,50 por dia de atraso
+      const vencimentoMulta = moment(devolucao).add(30, "days").format("YYYY-MM-DD");
+
+      // Registra a multa na tabela
+      await Multa.create({
+          idemprestimo: idemprestimo,
+          valor: valorMulta,
+          vencimento: vencimentoMulta,
+      });
+  }
+
+  // Atualiza a devolução no banco
+  const respostabanco = await Emprestimo.update(
+      { devolucao },
+      { where: { idemprestimo } }
+  );
+
+  // Atualiza o status do livro para disponível
+  const idlivro = emprestimoBanco.idlivro;
+  const emprestado = false;
+  await livro.update({ emprestado }, { where: { idlivro } });
+
+  res.status(200).json({
+      message: "Devolução realizada com sucesso.",
+      multa: diasAtraso > 0 ? { diasAtraso, valor: diasAtraso * 2.5 } : null,
+  });
+}
 export default {listar, selecionar, emprestar, devolver};
+
+
+
+
