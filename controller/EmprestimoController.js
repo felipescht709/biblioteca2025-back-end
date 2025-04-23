@@ -103,7 +103,23 @@ async function devolver(req, res) {
       multa: diasAtraso > 0 ? { diasAtraso, valor: diasAtraso * 2.5 } : null,
   });
 }
-export default {listar, selecionar, emprestar, devolver};
+
+async function listarPendentes(req, res) {
+    try {
+        const multasPendentes = await Multa.findAll({
+            where: {
+                pagamento: null, 
+            },
+        });
+
+        res.status(200).json(multasPendentes);
+    } catch (error) {
+        console.error("Erro ao listar multas pendentes:", error);
+        res.status(500).json({ error: "Erro ao listar multas pendentes." });
+    }
+}
+
+export default {listar, selecionar, emprestar, devolver,listarPendentes };
 
 
 

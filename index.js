@@ -88,6 +88,8 @@ app.delete('/usuario/:id', usuario.excluir);
 
 // listar todos os emprestimo
 app.get('/emprestimo', Emprestimo.listar);
+// listar multas pendentes
+app.get('/pendentes', Emprestimo.listarPendentes);
 // selecionar emprestimo by id
 app.get('/emprestimo/:id', Emprestimo.selecionar);
 // create emprestimo
